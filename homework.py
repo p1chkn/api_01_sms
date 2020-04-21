@@ -4,33 +4,35 @@ import requests
 from twilio.rest import Client
 from dotenv import load_dotenv
 
+load_dotenv()
+
+TOKEN_VK = os.getenv('TOKEN_VK')
+TOKEN_TWILIO = os.getenv('TOKEN_TWILIO')
+SID_TWILIO = os.getenv('SID_TWILIO')
+NUMBER_FROM = os.getenv('NUMBER_FROM')
+NUMBER_TO = os.getenv('NUMBER_TO')
+
 
 def get_status(user_id):
-    load_dotenv()
-    token = os.getenv('token_vk')
+
     url = 'https://api.vk.com/method/users.get'
     params = {
         'user_ids': user_id,
         'v': '5.92',
-        'access_token': token,
+        'access_token': TOKEN_VK,
         'fields': 'online'
-
     }
     r = requests.post(url=url, params=params)
     return r.json()['response'][0]['online']
 
 
 def sms_sender(sms_text):
-    load_dotenv()
-    token = os.getenv('token_twilio')
-    sid = os.getenv('sid_twilio')
-    number_to = os.getenv('number_to')
-    number_from = os.getenv('number_from')
-    client = Client(sid, token)
+
+    client = Client(SID_TWILIO, TOKEN_TWILIO)
     message = client.messages.create(
         body=sms_text,
-        from_=number_from,
-        to=number_to
+        from_=NUMBER_FROM,
+        to=NUMBER_TO
     )
 
     return message.sid
